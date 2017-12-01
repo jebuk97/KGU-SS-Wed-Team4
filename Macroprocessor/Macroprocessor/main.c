@@ -82,24 +82,60 @@ void main() {
 void macro_processor(FILE *in, FILE *out) {
 	DEFTAB definetable;
 	NAMTAB nametable[MACRO_MAX];
-	getLine(in, &definetable);
-	getLine(in, &definetable);
+}
+
+void define(Line* macro, DEFTAB *def, NAMTAB *name, FILE *in) {
+	int level;
+	int index = 0;
+	char arguments[MAX];
+	Line get;
+	strcpy(name->name, macro->label);
+	strcpy(def->prototype->name, macro->label);
+
+	//&args1,&args2 를 ,를 기준으로 split
+	strcpy(arguments, macro->address);
+	char *ptr = strtok(arguments, ",");
+	while (ptr != NULL) {
+		printf("%s\n", ptr);
+		ptr = strtok(NULL, ",");
+	}
+
+	level = 1;
+	while (level > 0) {
+		get = getLine(in, NULL);
+		if (!is_comment_line(macro)) {
+			//처음것이 나오면 ?1로 저장, ?2로 저장... 부분 추가해야함 (substitute positional notation for parameters)
+			//받은 line을 def에 저장
+			def->line[index] = get;
+			if (strcmp(macro->opcode, "MACRO")) {
+				level++;
+				name->start = &get;
+			}
+			else if (strcmp(macro->opcode, "MEND")) {
+				level--;
+				name->end = &get;
+			}
+		}
+	}
+	name->end = &get;
+
 }
 
 Line getLine(FILE *in, Line *pline)
 {
 	Line line = { 0, };
-	printf("hello\n");
+	printf("hello getLine\n");
 	int temp=0;
-	if (expanding == 1) {
+	if (expanding == TRUE) {
 		fscanf(in, "%d\t", &temp);
 		fscanf(in, "%s\t%s\t%s\t", line.address, line.label, line.opcode);
 		printf("%s\t%s\t%s\n", line.address, line.label, line.opcode);
 	}
 	else {
+		//printf("%s\n", pline);
+		//테스트용
 		return *pline;
 	}
 	
-
 	return line;
 }

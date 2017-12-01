@@ -1,9 +1,22 @@
 ﻿  main.c
-c:\users\전병욱\documents\visual studio 2017\projects\macroprocessor\macroprocessor\main.c(75): warning C4098: 'main': 'void' 함수에서 값을 반환하고 있습니다.
-c:\users\전병욱\documents\visual studio 2017\projects\macroprocessor\macroprocessor\main.c(82): warning C4101: 'nametable' :참조되지 않은 지역 변수입니다.
-c:\users\전병욱\documents\visual studio 2017\projects\macroprocessor\macroprocessor\main.c(92): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-  c:\program files (x86)\windows kits\10\include\10.0.15063.0\ucrt\stdio.h(1195): note: 'fscanf' 선언을 참조하십시오.
-c:\users\전병욱\documents\visual studio 2017\projects\macroprocessor\macroprocessor\main.c(93): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-  c:\program files (x86)\windows kits\10\include\10.0.15063.0\ucrt\stdio.h(1195): note: 'fscanf' 선언을 참조하십시오.
-  Macroprocessor.vcxproj -> C:\Users\전병욱\documents\visual studio 2017\Projects\Macroprocessor\Debug\Macroprocessor.exe
-  Macroprocessor.vcxproj -> C:\Users\전병욱\documents\visual studio 2017\Projects\Macroprocessor\Debug\Macroprocessor.pdb (Partial PDB)
+c:\users\전병욱\documents\github\project\kgu-ss-wed-team4\macroprocessor\macroprocessor\main.c(77): warning C4098: 'main': 'void' 함수에서 값을 반환하고 있습니다.
+c:\users\전병욱\documents\github\project\kgu-ss-wed-team4\macroprocessor\macroprocessor\main.c(83): warning C4101: 'definetable' :참조되지 않은 지역 변수입니다.
+c:\users\전병욱\documents\github\project\kgu-ss-wed-team4\macroprocessor\macroprocessor\main.c(84): warning C4101: 'nametable' :참조되지 않은 지역 변수입니다.
+c:\users\전병욱\documents\github\project\kgu-ss-wed-team4\macroprocessor\macroprocessor\main.c(87): warning C4028: 정식 매개 변수 1이(가) 선언과 다릅니다.
+c:\users\전병욱\documents\github\project\kgu-ss-wed-team4\macroprocessor\macroprocessor\main.c(106): warning C4133: '함수': 'Line *'과(와) 'char *' 사이의 형식이 호환되지 않습니다.
+c:\users\전병욱\documents\github\project\kgu-ss-wed-team4\macroprocessor\macroprocessor\main.c(92): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.14393.0\ucrt\string.h(129): note: 'strcpy' 선언을 참조하십시오.
+c:\users\전병욱\documents\github\project\kgu-ss-wed-team4\macroprocessor\macroprocessor\main.c(93): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.14393.0\ucrt\string.h(129): note: 'strcpy' 선언을 참조하십시오.
+c:\users\전병욱\documents\github\project\kgu-ss-wed-team4\macroprocessor\macroprocessor\main.c(96): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.14393.0\ucrt\string.h(129): note: 'strcpy' 선언을 참조하십시오.
+c:\users\전병욱\documents\github\project\kgu-ss-wed-team4\macroprocessor\macroprocessor\main.c(97): warning C4996: 'strtok': This function or variable may be unsafe. Consider using strtok_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.14393.0\ucrt\string.h(431): note: 'strtok' 선언을 참조하십시오.
+c:\users\전병욱\documents\github\project\kgu-ss-wed-team4\macroprocessor\macroprocessor\main.c(100): warning C4996: 'strtok': This function or variable may be unsafe. Consider using strtok_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.14393.0\ucrt\string.h(431): note: 'strtok' 선언을 참조하십시오.
+c:\users\전병욱\documents\github\project\kgu-ss-wed-team4\macroprocessor\macroprocessor\main.c(130): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.14393.0\ucrt\stdio.h(1192): note: 'fscanf' 선언을 참조하십시오.
+c:\users\전병욱\documents\github\project\kgu-ss-wed-team4\macroprocessor\macroprocessor\main.c(131): warning C4996: 'fscanf': This function or variable may be unsafe. Consider using fscanf_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  c:\program files (x86)\windows kits\10\include\10.0.14393.0\ucrt\stdio.h(1192): note: 'fscanf' 선언을 참조하십시오.
+main.obj : error LNK2019: _is_comment_line 외부 기호(참조 위치: _define 함수)에서 확인하지 못했습니다.
+C:\Users\전병욱\Documents\GitHub\project\KGU-SS-Wed-Team4\Macroprocessor\Debug\Macroprocessor.exe : fatal error LNK1120: 1개의 확인할 수 없는 외부 참조입니다.
