@@ -4,8 +4,8 @@
 #define TRUE 1
 #define FALSE 0
 
-#define WORD_MAX 10 //단어의 길이
-#define MACRO_MAX 20 //table의 개수
+#define WORD_MAX 50 //단어의 길이
+#define MACRO_MAX 1000 //table의 개수
 #define MAX 1000 //DEFTAB의 line 배열의 길이
 
 //매개변수와 그 매개변수에 해당되는 인자를 가지는 table 
@@ -22,9 +22,9 @@ typedef struct prototype {
 
 //한줄을 저장하는 구조체
 typedef struct line {
-	char label[MACRO_MAX];
-	char opcode[MACRO_MAX];
-	char address[MACRO_MAX];
+	char label[WORD_MAX];
+	char opcode[WORD_MAX];
+	char address[WORD_MAX];
 }Line;
 
 //매크로의 정의와 몸체를 구성하는 문장을 가지는 table
@@ -68,6 +68,9 @@ int compare_opcode(Line *line, char* buf);
 
 Line *getlinePtr = NULL;
 
+//문자열을 찾아 치환해주는 함수
+char *replaceAll(char *s, const char *olds, const char *news);
+
 void main() {
 	FILE *input, *output;
 	fopen_s(&input, "INPUT.txt", "r");
@@ -87,8 +90,10 @@ void macro_processor(FILE *in, FILE *out) {
 void define(Line* macro, DEFTAB *def, NAMTAB *name, FILE *in) {
 	int level;
 	int index = 0;
+	int index2 = 0;
+	char buf[WORD_MAX];
 	char arguments[WORD_MAX];
-	char argumentSet[3][MACRO_MAX];
+	char argumentSet[WORD_MAX][3];
 	Line get;
 	strcpy(name->name, macro->label);
 	strcpy(def->prototype->name, macro->label);
@@ -97,9 +102,9 @@ void define(Line* macro, DEFTAB *def, NAMTAB *name, FILE *in) {
 	strcpy(arguments, macro->address);
 	char *ptr = strtok(arguments, ",");
 	while (ptr != NULL) {
-		printf("%s\n", ptr);
-		strcpy(argumentSet[index], ptr);
-		index++;
+		strcpy(argumentSet[index2], ptr);
+		printf("%s\n", arguments[index2]);
+		index2++;
 		ptr = strtok(NULL, ",");
 	}
 
@@ -108,24 +113,18 @@ void define(Line* macro, DEFTAB *def, NAMTAB *name, FILE *in) {
 		get = getLine(in, NULL);
 		if (!is_comment_line(macro)) {
 
-			//처음것이 나오면 ?1로 저장, ?2로 저장... (지금은 3까지만 되게함)
-			for (int i = 0; i < index; i++) {
+			//처음것이 나오면 ?1로 치환, ?2로 치환...
+			for (int i = 0; i < index2; i++) {
 				ptr = strstr(get.address, argumentSet[i]);
+				sprintf(buf, "%s%d", "?", i + 1);
 				if (ptr == NULL) {
 					continue;
 				}
-				if (i == 0) {
-					strncpy(ptr, "?1", 2);
-				}
-				else if (i == 1) {
-					strncpy(ptr, "?2", 2);
-				}
 				else {
-					strncpy(ptr, "?3", 2);
+					strcpy(get.address, replaceAll(get.address, argumentSet[i], buf));
 				}
+				printf("%s\n", get.address);
 			}
-
-			index = 0; //다른곳(?)에 쓰기 시작...
 			
 			//받은 line을 def에 저장
 			def->line[index] = get;
@@ -136,6 +135,7 @@ void define(Line* macro, DEFTAB *def, NAMTAB *name, FILE *in) {
 			}
 			else if (strcmp(macro->opcode, "MEND")) {
 				level--;
+				def->last_line = index;
 				name->end = &get;
 			}
 		}
@@ -161,4 +161,38 @@ Line getLine(FILE *in, Line *pline)
 	}
 	
 	return line;
+}
+
+char *replaceAll(char *s, const char *olds, const char *news) {
+	char *result, *sr;
+	size_t i, count = 0;
+	size_t oldlen = strlen(olds); if (oldlen < 1) return s;
+	size_t newlen = strlen(news);
+
+
+	if (newlen != oldlen) {
+		for (i = 0; s[i] != '\0';) {
+			if (memcmp(&s[i], olds, oldlen) == 0) count++, i += oldlen;
+			else i++;
+		}
+	}
+	else i = strlen(s);
+
+
+	result = (char *)malloc(i + 1 + count * (newlen - oldlen));
+	if (result == NULL) return NULL;
+
+
+	sr = result;
+	while (*s) {
+		if (memcmp(s, olds, oldlen) == 0) {
+			memcpy(sr, news, newlen);
+			sr += newlen;
+			s += oldlen;
+		}
+		else *sr++ = *s++;
+	}
+	*sr = '\0';
+
+	return result;
 }
