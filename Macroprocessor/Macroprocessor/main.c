@@ -87,7 +87,9 @@ void macro_processor(FILE *in, FILE *out) {
 void define(Line* macro, DEFTAB *def, NAMTAB *name, FILE *in) {
 	int level;
 	int index = 0;
+	int index2 = 0;
 	char arguments[MAX];
+	char argumentSet[3][MAX];
 	Line get;
 	strcpy(name->name, macro->label);
 	strcpy(def->prototype->name, macro->label);
@@ -97,16 +99,36 @@ void define(Line* macro, DEFTAB *def, NAMTAB *name, FILE *in) {
 	char *ptr = strtok(arguments, ",");
 	while (ptr != NULL) {
 		printf("%s\n", ptr);
+		strcpy(argumentSet[index2], ptr);
+		index2++;
 		ptr = strtok(NULL, ",");
 	}
-
+	index = 0;
 	level = 1;
 	while (level > 0) {
 		get = getLine(in, NULL);
 		if (!is_comment_line(macro)) {
-			//처음것이 나오면 ?1로 저장, ?2로 저장... 부분 추가해야함 (substitute positional notation for parameters)
+
+			//처음것이 나오면 ?1로 저장, ?2로 저장...
+			for (int i = 0; i < index2; i++) {
+				ptr = strstr(get.address, argumentSet[i]);
+				if (ptr == NULL) {
+					continue;
+				}
+				if (i == 0) {
+					strncpy(ptr, "?1", 2);
+				}
+				else if (i == 1) {
+					strncpy(ptr, "?2", 2);
+				}
+				else {
+					strncpy(ptr, "?3", 2);
+				}
+			}
+				
 			//받은 line을 def에 저장
 			def->line[index] = get;
+			index++;
 			if (strcmp(macro->opcode, "MACRO")) {
 				level++;
 				name->start = &get;
