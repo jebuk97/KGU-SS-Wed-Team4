@@ -87,12 +87,13 @@ int main() {
 
 void macro_processor(FILE *in, FILE *out) {
 	DEFTAB definetable;
+	definetable.last_line = 0;
 	NAMTAB nametable[MACRO_MAX];
 	expanding = FALSE;
 	Line buf;
 	while (strcmp(buf.opcode, "END")) {
 		buf = getLine(in, NULL, NULL);
-		//processline(in, out, &definetable, &nametable[top], &buf);
+		processline(in, out, &definetable, nametable, &buf);
 	}
 }
 
@@ -102,30 +103,30 @@ void define(Line* macro, DEFTAB *def, NAMTAB *name, FILE *in) {
 	int index2 = 0;
 	char buf[WORD_MAX];
 	char arguments[WORD_MAX];
-	char argumentSet[WORD_MAX][3];
+	char argumentSet[3][WORD_MAX];
 	Line get;
 	strcpy(name->name, macro->label);
-	strcpy(def->prototype->name, macro->label);
+	strcpy(def->prototype[top].name, macro->label);
 
 	//&args1,&args2 를 ,를 기준으로 split
 	strcpy(arguments, macro->address);
 	char *ptr = strtok(arguments, ",");
 	while (ptr != NULL) {
 		strcpy(argumentSet[index2], ptr);
-		printf("%s\n", arguments[index2]);
+		strcpy(def->prototype[top].argtab[index2].parameter, ptr);
 		index2++;
 		ptr = strtok(NULL, ",");
 	}
 
 	level = 1;
+	name->start = &def->line[def->last_line];
 	while (level > 0) {
 		get = getLine(in, NULL, NULL);
-		if (!is_comment_line(macro)) {
-
+		if (!is_comment_line(&get)) {
 			//처음것이 나오면 ?1로 치환, ?2로 치환...
 			for (int i = 0; i < index2; i++) {
 				ptr = strstr(get.address, argumentSet[i]);
-				sprintf(buf, "%s%d", "?", i + 1);
+				sprintf(buf, "?%d", i + 1);
 				if (ptr == NULL) {
 					continue;
 				}
@@ -134,23 +135,21 @@ void define(Line* macro, DEFTAB *def, NAMTAB *name, FILE *in) {
 				}
 				printf("%s\n", get.address);
 			}
-
 			//받은 line을 def에 저장
-			def->line[index] = get;
-			index++;
-			if (strcmp(macro->opcode, "MACRO")) {
+			def->line[def->last_line++] = get;
+			if (compare_opcode(&get, "MACRO")) {
 				level++;
-				name->start = &get;
+				(++name)->start = &get;
+				top++;
 			}
-			else if (strcmp(macro->opcode, "MEND")) {
+			else if (compare_opcode(&get, "MEND\n")) {
 				level--;
-				def->last_line = index;
 				name->end = &get;
 			}
 		}
 	}
 	name->end = &get;
-
+	top++;
 }
 
 Line getLine(FILE *in, PROTOTYPE *p, Line *pline)
@@ -177,7 +176,7 @@ Line getLine(FILE *in, PROTOTYPE *p, Line *pline)
 		strcpy(line.label, ptr);
 		if (!strcmp(ptr, ".")) {
 			strcpy(line.opcode, "");
-			strcpy(line.address, "");
+			strcpy(line.address, "\n");
 			return line;
 		}
 		ptr = strtok(NULL, "\t");
@@ -236,4 +235,20 @@ int compare_opcode(Line *line, char* buf) {
 	if (!strcmp(line->opcode, buf))
 		return 1;
 	return 0;
+}
+
+void processline(FILE *in, FILE *out, DEFTAB *def, NAMTAB *name, Line *line) {
+	for (int i = 0; i < top; i++)
+		if (compare_opcode(line, name[i].name))
+			expand(in, out, def, name, line);
+	if (compare_opcode(line, "MACRO"))
+		define(line, def, &name[top], in);
+	else
+		if (!is_comment_line(line))
+			fprintf(out, "%s\t%s\t%s", line->label, line->opcode, line->address);
+
+}
+
+void expand(FILE *in, FILE *out, DEFTAB *def, NAMTAB *name, Line *line) {
+
 }
