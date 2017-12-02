@@ -156,7 +156,8 @@ void define(Line* macro, DEFTAB *def, NAMTAB *name, FILE *in) {
 Line getLine(FILE *in, PROTOTYPE *p, Line *pline)
 {
 	Line line;
-	printf("hello getLine\n");
+	char buf[50];
+	char *ptr = NULL;
 	int temp = 0;
 	if (expanding == TRUE) {
 		line = *pline;
@@ -166,7 +167,27 @@ Line getLine(FILE *in, PROTOTYPE *p, Line *pline)
 		printf("%s\t%s\t%s\n", line.address, line.label, line.opcode);
 	}
 	else {
-		fscanf(in, "%s%s%s", &line.label, &line.opcode, &line.address);
+		fgets(buf, 50, in);
+		if (buf[0] == '\t') {
+			for (int i = 48; i >= 0; i--)
+				buf[i + 1] = buf[i];
+			buf[0] = ' ';
+		}
+		ptr = strtok(buf, "\t");
+		strcpy(line.label, ptr);
+		if (!strcmp(ptr, ".")) {
+			strcpy(line.opcode, "");
+			strcpy(line.address, "");
+			return line;
+		}
+		ptr = strtok(NULL, "\t");
+		strcpy(line.opcode, ptr);
+		if (!strcmp(ptr, "MEND\n")) {
+			strcpy(line.address, "");
+			return line;
+		}
+		ptr = strtok(NULL, "\t");
+		strcpy(line.address, ptr);
 	}
 	return line;
 }
