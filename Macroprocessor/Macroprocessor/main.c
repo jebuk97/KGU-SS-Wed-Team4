@@ -69,14 +69,12 @@ int is_comment_line(Line *buf);
 //line의 opcode가 주어진 문자열과 같은지 비교하는 함수
 int compare_opcode(Line *line, char* buf);
 
-Line *getlinePtr = NULL;
-
 //문자열을 찾아 치환해주는 함수
 char *replaceAll(char *s, const char *olds, const char *news);
 
 int main() {
 	FILE *input, *output;
-	fopen_s(&input, "INPUT.txt", "r");
+	fopen_s(&input,"INPUT.txt", "r");
 	fopen_s(&output, "OUTPUT.txt", "w");
 	if (input == NULL || output == NULL) {
 		printf("파일열기 실패");
@@ -104,12 +102,15 @@ void define(Line* macro, DEFTAB *def, NAMTAB *name, FILE *in) {
 	char buf[WORD_MAX];
 	char arguments[WORD_MAX];
 	char argumentSet[3][WORD_MAX];
+	char *str = NULL;
 	Line get;
 	strcpy(name->name, macro->label);
 	strcpy(def->prototype[top].name, macro->label);
 
 	//&args1,&args2 를 ,를 기준으로 split
 	strcpy(arguments, macro->address);
+	strcpy(arguments, replaceAll(arguments, "\n", "\0"));
+
 	char *ptr = strtok(arguments, ",");
 	while (ptr != NULL) {
 		strcpy(argumentSet[index2], ptr);
@@ -131,9 +132,10 @@ void define(Line* macro, DEFTAB *def, NAMTAB *name, FILE *in) {
 					continue;
 				}
 				else {
-					strcpy(get.address, replaceAll(get.address, argumentSet[i], buf));
+					str = replaceAll(get.address, argumentSet[i], buf);
+					strcpy(get.address, str);
+					printf("%s\t%s\t%s", get.label, get.opcode, get.address);
 				}
-				printf("%s\n", get.address);
 			}
 			//받은 line을 def에 저장
 			def->line[def->last_line++] = get;
